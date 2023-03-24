@@ -1,11 +1,10 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_new, prefer_const_literals_to_create_immutables
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flow/screens/graphReport.dart';
+import 'package:flow/screens/cyleGraph.dart';
+import 'package:flow/screens/logPeriods.dart';
 import 'package:flow/screens/logsymptoms.dart';
-import 'package:flow/screens/predModel.dart';
 import 'package:flow/screens/profile.dart';
-import 'package:flow/services/firebase_services.dart';
 import 'package:flutter/material.dart';
 import 'package:horizontal_calendar/horizontal_calendar.dart';
 import 'package:intl/intl.dart';
@@ -20,6 +19,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  List<DateTime> toHighlight = [DateTime(2023, 3, 20)];
   Map cycleData = <String, dynamic>{};
   var predValue = "";
   var predValue2 = "";
@@ -85,7 +85,7 @@ class _DashboardState extends State<Dashboard> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => GraphReport()),
+                                      builder: (context) => CycleGraph()),
                                 );
                               },
                               child: Text(
@@ -100,11 +100,6 @@ class _DashboardState extends State<Dashboard> {
                           Spacer(),
                           GestureDetector(
                               onTap: () {
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) => Profile()),
-                                // );
                                 _showSimpleModalDialog(context);
                               },
                               child: Padding(
@@ -218,7 +213,22 @@ class _DashboardState extends State<Dashboard> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => LogSymptoms()),
+                                      builder: (context) =>
+                                          LogPeriods(toHighlight: [
+                                            DateTime.now().add(Duration(
+                                                days: int.parse(predValue))),
+                                            DateTime.now().add(Duration(
+                                                days:
+                                                    int.parse(predValue) + 1)),
+                                            DateTime.now().add(Duration(
+                                                days:
+                                                    int.parse(predValue) + 2)),
+                                            DateTime.now().add(Duration(
+                                                days:
+                                                    int.parse(predValue) + 3)),
+                                            DateTime.now().add(Duration(
+                                                days: int.parse(predValue) + 4))
+                                          ])),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -267,7 +277,7 @@ class _DashboardState extends State<Dashboard> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PredModel()),
+                                builder: (context) => LogSymptoms()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -308,8 +318,8 @@ class _DashboardState extends State<Dashboard> {
             label: 'Insights',
           ),
           BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage("images/glass.png")),
-            label: 'Secret Chat',
+            icon: ImageIcon(AssetImage("images/graph.png")),
+            label: 'Graph Report',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -390,7 +400,6 @@ class _DashboardState extends State<Dashboard> {
             .get()
             .then((value) async {
           cycleData = value.data()!;
-          print(cycleData['March']['EstimatedDayofOvulation']);
           f1 = cycleData['March']['EstimatedDayofOvulation'] as int;
           f2 = cycleData['March']['LengthofLutealPhase'] as int;
           f3 = cycleData['March']['LengthofMenses'] as int;

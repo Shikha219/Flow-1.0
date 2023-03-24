@@ -65,7 +65,24 @@ class FirebaseServices {
           .doc(account.displayName)
           .collection('cycle-info')
           .doc(DateFormat.yMMMM().format(DateTime.now()))
-          .set({DateFormat.MMMM().format(DateTime.now()): ''});
+          .set({'DateFormat.MMMM().format(DateTime.now())': ''});
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(account.email)
+          .collection('personal-info')
+          .doc(account.displayName)
+          .collection('symptoms')
+          .doc(DateFormat.yMMMMd().format(DateTime.now()))
+          .set({
+        'weight': '',
+        'sleep': '',
+        'water': '',
+        'mood': '',
+        'symptoms': '',
+        'vaginal-discharge': '',
+        'others': ''
+      });
     }
   }
 
